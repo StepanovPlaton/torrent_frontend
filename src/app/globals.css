@@ -3,31 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-bg0: #fbf1c7;
+  --color-bg1: #ebdbb2;
+  --color-bg4: #a89984;
+
+  --color-fg0: #282828;
+  --color-fg1: #3c3836;
+  --color-fg4: #7c6f64;
+
+  --app-width: 70%;
+  font-size: calc((100vh / 1080) * 24);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+[data-theme="dark"] {
+  --color-bg0: #282828;
+  --color-bg1: #3c3836;
+  --color-bg4: #7c6f64;
+
+  --color-fg0: #fbf1c7;
+  --color-fg1: #ebdbb2;
+  --color-fg4: #a89984;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  transition-property: color, background-color, border-color;
+  transition-duration: 0.3s;
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  overflow: hidden;
+  color: var(--color-fg1);
+  background-color: var(--color-bg0);
 }
