@@ -1,3 +1,3 @@
 export const GameCard = () => {
-  return <></>;
+	return <></>;
 };
