@@ -48,8 +48,8 @@ export const Header = () => {
 						/>
 						<span
 							className="peer-focus/search:opacity-0 
-                  peer-[:not(:placeholder-shown)]/search:opacity-0 
-                  transition-all h-0 flex items-center relative bottom-3"
+                  				peer-[:not(:placeholder-shown)]/search:opacity-0 
+                  				transition-opacity h-0 flex items-center relative bottom-3"
 						>
 							<SearchIcon className="w-4 h-4 mx-2" />
 							Поиск
