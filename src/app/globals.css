@@ -11,8 +11,12 @@
   --color-fg1: #3c3836;
   --color-fg4: #7c6f64;
 
+  --color-ac0: #83a598;
+  --color-ac1: #fabd2f;
+  --color-ac2: #8ec07c;
+
   --app-width: 70%;
-  font-size: calc((100vh / 1080) * 24);
+  font-size: calc((100vw / 1920) * 24);
 }
 
 [data-theme="dark"] {
@@ -23,6 +27,10 @@
   --color-fg0: #fbf1c7;
   --color-fg1: #ebdbb2;
   --color-fg4: #a89984;
+
+  --color-ac0: #076678;
+  --color-ac1: #b57614;
+  --color-ac2: #427b58;
 }
 
 html,
@@ -37,7 +45,7 @@ body {
   transition-property: color, background-color, border-color;
   transition-duration: 0.3s;
 
-  overflow: hidden;
+  /* overflow: hidden; */
   color: var(--color-fg1);
   background-color: var(--color-bg0);
 }
@@ -48,8 +56,13 @@ body {
   }
 }
 
+@media (max-width: 1024px) {
+  :root {
+    font-size: calc((100vw / 1920) * 56);
+  }
+}
 @media (max-width: 640px) {
   :root {
-    font-size: calc((100vh / 1080) * 16);
+    font-size: calc((100vw / 1920) * 64);
   }
 }
