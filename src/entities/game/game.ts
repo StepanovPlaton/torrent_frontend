@@ -1,5 +1,6 @@
 import { HTTPService } from "@/shared/http/httpService";
 import { gameCardsSchema, GameCardType } from "./schemas/gameCard";
+import { gameSchema, GameType } from "./schemas/game";
 
 export abstract class GameService {
 	public static async getGameCards() {
@@ -7,5 +8,8 @@ export abstract class GameService {
 			"/games/cards",
 			gameCardsSchema
 		);
+	}
+	public static async getGame(id: number) {
+		return await HTTPService.get<GameType>(`/games/${id}`, gameSchema);
 	}
 }

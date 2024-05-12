@@ -23,7 +23,9 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<ThemeProvider enableSystem={false} defaultTheme="light">
 					<Header />
-					{children}
+					<div className="w-full h-full max-w-[var(--app-width)] m-auto overflow-y-auto">
+						{children}
+					</div>
 				</ThemeProvider>
 			</body>
 		</html>

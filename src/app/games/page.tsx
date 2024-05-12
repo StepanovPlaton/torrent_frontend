@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 		".Torrent: Игры - каталог .torrent файлов для обмена видеоиграми",
 };
 
-export default async function Home() {
+export default async function Games() {
 	const gameCards = await GameService.getGameCards();
 	return (
-		<div className="w-full h-full max-w-[var(--app-width)] m-auto overflow-y-auto">
+		<>
 			{gameCards && (
 				<Section>
 					{gameCards.map((card) => (
@@ -20,6 +20,6 @@ export default async function Home() {
 					))}
 				</Section>
 			)}
-		</div>
+		</>
 	);
 }

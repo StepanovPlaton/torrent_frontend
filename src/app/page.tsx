@@ -5,7 +5,7 @@ import { Section } from "@/widgets/section";
 export default async function Home() {
 	const gameCards = await GameService.getGameCards();
 	return (
-		<div className="w-full h-full max-w-[var(--app-width)] m-auto overflow-y-auto">
+		<>
 			{gameCards && (
 				<Section
 					name="Игры"
@@ -17,6 +17,6 @@ export default async function Home() {
 					))}
 				</Section>
 			)}
-		</div>
+		</>
 	);
 }

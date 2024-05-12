@@ -1,9 +1,10 @@
 import { GameCardType } from "@/entities/game";
 import Image from "next/image";
+import Link from "next/link";
 
 export const GameCard = ({ card }: { card: GameCardType }) => {
 	return (
-		<div className="group/gamecard cursor-pointer">
+		<Link className="group/gamecard cursor-pointer" href={"/games/" + card.id}>
 			{!!card.cover_preview && (
 				<Image
 					src={card.cover_preview}
@@ -26,6 +27,6 @@ export const GameCard = ({ card }: { card: GameCardType }) => {
 			<p className="text-lg tb:text-sm pr-2 text-justify line-clamp-5 text-fg4">
 				{card.description}
 			</p>
-		</div>
+		</Link>
 	);
 };

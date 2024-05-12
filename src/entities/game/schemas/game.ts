@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { gameCardSchema } from "./gameCard";
 
-export const gameSchema = z.union([
-	gameCardSchema,
+export const gameSchema = gameCardSchema.and(
 	z.object({
 		torrent_file: z.string().min(1),
 		language: z.string().optional(),
@@ -17,8 +16,8 @@ export const gameSchema = z.union([
 			.string()
 			.min(1)
 			.transform((d) => new Date(d)),
-	}),
-]);
+	})
+);
 export type GameType = z.infer<typeof gameSchema>;
 
 export const isGame = (a: any): a is GameType => {
