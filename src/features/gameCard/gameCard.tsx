@@ -4,9 +4,9 @@ import Image from "next/image";
 export const GameCard = ({ card }: { card: GameCardType }) => {
 	return (
 		<div className="group/gamecard cursor-pointer">
-			{!!card.cover && (
+			{!!card.cover_preview && (
 				<Image
-					src={card.cover}
+					src={card.cover_preview}
 					className="rounded-lg"
 					alt=""
 					width={700}

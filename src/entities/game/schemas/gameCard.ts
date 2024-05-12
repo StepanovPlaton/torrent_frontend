@@ -1,20 +1,27 @@
 import { z } from "zod";
 
-export const gameCardSchema = z.object({
-	id: z.number(),
-	title: z.string().min(3),
-	cover: z
-		.string()
-		.optional()
-		.transform((u) => {
-			if (!!u) return process.env.NEXT_PUBLIC_COVER_FULL_URL + "/" + u;
-		}),
-	description: z.string().optional(),
-	release_date: z
-		.string()
-		.min(1)
-		.transform((d) => new Date(d)),
-});
+export const gameCardSchema = z
+	.object({
+		id: z.number(),
+		title: z.string().min(3),
+		cover: z.string().optional(),
+		description: z.string().optional(),
+		release_date: z
+			.string()
+			.min(1)
+			.transform((d) => new Date(d)),
+	})
+	.transform((card) => {
+		return {
+			...card,
+			cover: card.cover
+				? process.env.NEXT_PUBLIC_COVER_FULL_URL + "/" + card.cover
+				: undefined,
+			cover_preview: card.cover
+				? process.env.NEXT_PUBLIC_COVER_PREVIEW_URL + "/" + card.cover
+				: undefined,
+		};
+	});
 export type GameCardType = z.infer<typeof gameCardSchema>;
 
 export const isGameCard = (a: any): a is GameCardType => {

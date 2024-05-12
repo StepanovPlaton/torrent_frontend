@@ -7,24 +7,25 @@ import { Header } from "@/widgets/header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: ".Torrent",
-  description: ".torrent file sharing service",
+	title: ".Torrent",
+	description:
+		".Torrent - сервис обмена .torrent файлами видеоигр, фильмов и аудиокниг",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    // suppressHydrationWarning only for html for theme support
-    <html lang="ru" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider enableSystem={false} defaultTheme="light">
-          <Header />
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+	return (
+		// suppressHydrationWarning for theme support
+		<html lang="ru" suppressHydrationWarning>
+			<body className={inter.className}>
+				<ThemeProvider enableSystem={false} defaultTheme="light">
+					<Header />
+					{children}
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }
