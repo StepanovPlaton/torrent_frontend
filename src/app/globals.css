@@ -16,7 +16,7 @@
   --color-ac2: #8ec07c;
 
   --app-width: 70%;
-  font-size: calc((100vw / 1920) * 24);
+  font-size: calc((100vw / 1920) * 20);
 }
 
 [data-theme="dark"] {
@@ -50,17 +50,14 @@ body {
   background-color: var(--color-bg0);
 }
 
-@media (max-width: 1280px) {
-  :root {
-    --app-width: 100%;
-  }
-}
 
 @media (max-width: 1024px) {
   :root {
     font-size: calc((100vw / 1920) * 56);
+    --app-width: 100%;
   }
 }
+
 @media (max-width: 640px) {
   :root {
     font-size: calc((100vw / 1920) * 64);
