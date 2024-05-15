@@ -6,21 +6,24 @@ import { Header } from "@/widgets/header";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
-	children,
+  auth,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  auth: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		// suppressHydrationWarning for theme support
-		<html lang="ru" suppressHydrationWarning>
-			<body className={inter.className}>
-				<ThemeProvider enableSystem={false} defaultTheme="light">
-					<Header />
-					<div className="w-full h-full max-w-[var(--app-width)] m-auto">
-						{children}
-					</div>
-				</ThemeProvider>
-			</body>
-		</html>
-	);
+  return (
+    // suppressHydrationWarning for theme support
+    <html lang="ru" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider enableSystem={false} defaultTheme="light">
+          {auth}
+          <Header />
+          <div className="w-full h-full max-w-[var(--app-width)] m-auto">
+            {children}
+          </div>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
