@@ -1,8 +1,11 @@
 "use client";
 
+import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { boolean } from "zod";
 
 export const Section = ({
 	name,
@@ -16,6 +19,9 @@ export const Section = ({
 	children: React.ReactNode;
 }) => {
 	const router = useRouter();
+	const [loaded, setLoaded] = useState<boolean>(false);
+
+	useEffect(() => setLoaded(true), []);
 
 	return (
 		<section className="w-full h-fit p-2 mb-20 pt-8">
@@ -27,7 +33,13 @@ export const Section = ({
 					{name}
 				</h2>
 			)}
-			<ResponsiveMasonry columnsCountBreakPoints={{ 0: 1, 640: 2, 1024: 3 }}>
+			<ResponsiveMasonry
+				className={clsx(
+					"transition-opacity duration-300 opacity-0",
+					loaded && "opacity-100"
+				)}
+				columnsCountBreakPoints={{ 0: 1, 640: 2, 1024: 3 }}
+			>
 				<Masonry gutter="1rem">{children}</Masonry>
 			</ResponsiveMasonry>
 			{link && invite_text && (

@@ -1,3 +1,3 @@
-import { getYouTubeID } from "./get_youtube_id";
+import { getYouTubeID } from "./getYoutubeId";
 
 export { getYouTubeID };

@@ -1,4 +1,4 @@
-import { HTTPService } from "@/shared/http/httpService";
+import { HTTPService } from "@/shared/utils/http";
 import { gameCardsSchema, GameCardType } from "./schemas/gameCard";
 import { gameSchema, GameType } from "./schemas/game";
 
