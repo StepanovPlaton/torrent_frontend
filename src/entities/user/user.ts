@@ -11,10 +11,10 @@ import Cookies from "js-cookie";
 
 export abstract class UserService {
 	public static async Login(loginForm: LoginForm) {
-		const accessToken = await HTTPService.post<TokenResponse>(
+		const accessToken = await HTTPService.post(
 			"/auth",
-			new URLSearchParams(Object.entries(loginForm)),
 			tokenResponseSchema,
+			new URLSearchParams(Object.entries(loginForm)),
 			{
 				"Content-Type": "application/x-www-form-urlencoded",
 			}
@@ -29,6 +29,10 @@ export abstract class UserService {
 				return tokenData;
 			}
 		}
+	}
+
+	public static GetToken(): string | undefined {
+		return Cookies.get("access-token");
 	}
 
 	public static IdentifyYourself(): TokenData | undefined {

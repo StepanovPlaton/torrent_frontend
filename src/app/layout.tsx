@@ -19,7 +19,10 @@ export default function RootLayout({
 				<ThemeProvider enableSystem={false} defaultTheme="light">
 					{auth}
 					<Header />
-					<div className="w-full h-full max-w-[var(--app-width)] m-auto overflow-y-auto">
+					<div
+						className="w-full h-[calc(100%_-_5rem)] \
+						 max-w-[var(--app-width)] m-auto overflow-y-auto"
+					>
 						{children}
 					</div>
 				</ThemeProvider>

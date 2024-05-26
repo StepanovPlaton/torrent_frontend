@@ -15,7 +15,7 @@ export const GameCard = ({ card }: { card: GameCardType }) => {
 				/>
 			)}
 			<div className="flex items-center justify-between pr-2">
-				<h2 className="text-3xl tb:text-xl py-1 group-hover/gamecard:underline underline-offset-4">
+				<h2 className="text-3xl tb:text-xl py-1 group-hover/gamecard:underline underline-offset-1">
 					{card.title}
 				</h2>
 				{card.version && (

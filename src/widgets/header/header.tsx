@@ -50,6 +50,7 @@ export const Header = () => {
 					</span>
 					<label className="flex flex-col items-start relative w-36">
 						<input
+							type="search"
 							className="peer/search w-full rounded-lg bg-bg4 px-2"
 							placeholder=" "
 						/>

@@ -52,8 +52,14 @@ body {
   overflow: hidden;
   color: var(--color-fg1);
   background-color: var(--color-bg0);
+
+
 }
 
+body * {
+  scrollbar-color: var(--color-ac0) var(--color-bg1);
+  scrollbar-width: thin;
+}
 
 @media (max-width: 1024px) {
   :root {

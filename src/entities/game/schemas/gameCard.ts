@@ -1,8 +1,7 @@
 import { z } from "zod";
 
-export const gameCardSchema = z
+export const gameCardBaseSchema = z
 	.object({
-		id: z.number().positive(),
 		title: z.string().min(3),
 		cover: z.string().optional(),
 		description: z.string().optional(),
@@ -19,6 +18,12 @@ export const gameCardSchema = z
 				: undefined,
 		};
 	});
+
+export const gameCardSchema = gameCardBaseSchema.and(
+	z.object({
+		id: z.number().positive(),
+	})
+);
 export type GameCardType = z.infer<typeof gameCardSchema>;
 
 export const isGameCard = (a: any): a is GameCardType => {
