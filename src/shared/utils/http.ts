@@ -31,7 +31,11 @@ export abstract class HTTPService {
         else throw Error("Response ok = false");
       })
       .then((r) => r.json())
-      .then((d) => schema.parse(d) as z.infer<Z>)
+      .then((d) => {
+        const parsed = schema.safeParse(d);
+        if (parsed.success) return parsed.data as z.infer<Z>;
+        else throw new Error(parsed.error.message);
+      })
       .catch((e) => {
         console.error(e);
         return null;

@@ -1,21 +1,18 @@
 import { GameService } from "@/entities/game";
 import { GameCard } from "@/features/gameCard";
+import { GameInfo } from "@/widgets/gameInfo";
 import { Section } from "@/widgets/section";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: ".Torrent",
-  description:
-    ".Torrent - сервис обмена .torrent файлами видеоигр, фильмов и аудиокниг",
-};
-
-export default async function Home() {
+export default async function AddGame() {
   const gameCards = await GameService.GetGameCards();
+
   return (
     <>
-      {gameCards && gameCards.length > 0 && (
+      <GameInfo game={GameService.GetEmptyGame()} />
+
+      {gameCards && (
         <Section
-          name="Игры"
+          name="Популярные игры"
           link="/games"
           invite_text={'Перейти в раздел "Игры"'}
         >

@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const gameCardBaseSchema = z.object({
-  title: z.string().min(3),
-  cover: z.string().optional(),
-  description: z.string().optional(),
-  version: z.string().optional(),
+  title: z.string().min(3, "Слишком короткое название"),
+  cover: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  version: z.string().optional().nullable(),
 });
 
 export const gameCardSchema = gameCardBaseSchema.merge(

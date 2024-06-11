@@ -3,23 +3,30 @@ import { gameCardBaseSchema } from "./gameCard";
 
 export const gameBaseSchema = gameCardBaseSchema.merge(
   z.object({
-    torrent_file: z.string().min(1),
+    torrent_file: z.string().min(3, "У раздачи должен быть .torrent файл"),
     trailer: z.string().optional(),
 
-    system: z.string().optional(),
-    processor: z.string().optional(),
-    memory: z.string().optional(),
-    graphics: z.string().optional(),
-    storage: z.string().optional(),
+    system: z.string().optional().nullable(),
+    processor: z.string().optional().nullable(),
+    memory: z.string().optional().nullable(),
+    graphics: z.string().optional().nullable(),
+    storage: z.string().optional().nullable(),
 
-    developer: z.string().optional(),
-    language: z.string().optional(),
-    download_size: z.string().optional(),
+    developer: z.string().optional().nullable(),
+    language: z.string().optional().nullable(),
+    download_size: z.string().optional().nullable(),
 
     release_date: z
       .string()
-      .min(1)
-      .transform((d) => new Date(d)),
+      .optional()
+      .nullable()
+      .transform((d) =>
+        d
+          ? new Date(d).toLocaleDateString("en-us", {
+              year: "numeric",
+            })
+          : undefined
+      ),
   })
 );
 

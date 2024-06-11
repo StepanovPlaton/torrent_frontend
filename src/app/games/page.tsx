@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Games() {
-  const gameCards = await GameService.getGameCards();
+  const gameCards = await GameService.GetGameCards();
   return (
     <>
       {gameCards && gameCards.length > 0 && (
