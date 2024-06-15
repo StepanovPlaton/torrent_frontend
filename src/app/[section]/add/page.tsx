@@ -3,6 +3,21 @@ import { ItemCard } from "@/features/itemCard";
 import { ItemInfo } from "@/widgets/itemInfo";
 import { Section } from "@/widgets/section";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params: { section },
+}: {
+  params: { section: string };
+}): Promise<Metadata> {
+  if (!isSection(section)) {
+    redirect("/");
+    return {};
+  }
+  return {
+    title: `.Torrent: ${ItemService.itemSections[section].addItemText}`,
+  };
+}
 
 export default async function AddItem({
   params: { section },

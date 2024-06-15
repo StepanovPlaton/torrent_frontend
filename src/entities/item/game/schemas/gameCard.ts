@@ -36,8 +36,5 @@ export const gameCardsSchema = z.array(z.any()).transform((a) => {
 });
 
 export const isGame = (a: any): a is GameCardType => {
-  return (
-    gameCardBaseSchema.safeParse(a).success &&
-    (a as GameCardType).type === TypesOfItems.game
-  );
+  return (a as GameCardType).type === TypesOfItems.game;
 };

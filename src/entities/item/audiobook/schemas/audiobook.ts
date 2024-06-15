@@ -44,14 +44,14 @@ export const audiobookSchema = audiobookBaseSchema.merge(
 );
 export type AudiobookType = z.infer<typeof audiobookSchema>;
 
-export const isAudiobook = (a: any): a is AudiobookType => {
+export const isAudiobookStrict = (a: any): a is AudiobookType => {
   return audiobookSchema.safeParse(a).success;
 };
 
 export const audiobooksSchema = z.array(z.any()).transform((a) => {
   const audiobooks: AudiobookType[] = [];
   a.forEach((e) => {
-    if (isAudiobook(e)) audiobooks.push(audiobookSchema.parse(e));
+    if (isAudiobookStrict(e)) audiobooks.push(audiobookSchema.parse(e));
     else console.error("Audiobook parse error - ", e);
   });
   return audiobooks;

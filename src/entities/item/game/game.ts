@@ -1,4 +1,4 @@
-import { HTTPService } from "@/shared/utils/http";
+import { HTTPService, RequestCacheOptions } from "@/shared/utils/http";
 import { gameCardsSchema } from "./schemas/gameCard";
 import { GameCreateType, gameSchema, GameType } from "./schemas/game";
 import {
@@ -13,17 +13,40 @@ import { ItemService } from "../item";
 
 @staticImplements<IItemService>()
 export abstract class GameService {
+  public static cacheTag = "all_games";
+  public static urlPrefix = "games";
+  private static cacheOptions(custom_tag?: string): RequestCacheOptions {
+    return {
+      next: {
+        tags: custom_tag ? [this.cacheTag, custom_tag] : [this.cacheTag],
+        revalidate: 60 * 5,
+      },
+    };
+  }
+
   public static async GetCards() {
-    return await HTTPService.get("/games/cards", gameCardsSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/cards`,
+      gameCardsSchema,
+      this.cacheOptions(`/${this.urlPrefix}/cards`)
+    );
   }
   public static async Get(id: number) {
-    return await HTTPService.get(`/games/${id}`, gameSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/${id}`,
+      gameSchema,
+      this.cacheOptions(`/${this.urlPrefix}/${id}`)
+    );
   }
   public static async Add(info: GameCreateType) {
-    return await HTTPService.post(`/games`, gameSchema, info);
+    return await HTTPService.post(`/${this.urlPrefix}`, gameSchema, {
+      body: info,
+    });
   }
   public static async Change(id: number, info: GameCreateType) {
-    return await HTTPService.put(`/games/${id}`, gameSchema, info);
+    return await HTTPService.put(`/${this.urlPrefix}/${id}`, gameSchema, {
+      body: info,
+    });
   }
 
   public static GetEmpty(): GameCreateType {

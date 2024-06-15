@@ -1,4 +1,4 @@
-import { HTTPService } from "@/shared/utils/http";
+import { HTTPService, RequestCacheOptions } from "@/shared/utils/http";
 import { movieCardsSchema } from "./schemas/movieCard";
 import { MovieCreateType, movieSchema, MovieType } from "./schemas/movie";
 import {
@@ -13,17 +13,40 @@ import { ItemService } from "../item";
 
 @staticImplements<IItemService>()
 export abstract class MovieService {
+  public static cacheTag = "all_movies";
+  public static urlPrefix = "movies";
+  private static cacheOptions(custom_tag?: string): RequestCacheOptions {
+    return {
+      next: {
+        tags: custom_tag ? [this.cacheTag, custom_tag] : [this.cacheTag],
+        revalidate: 60 * 5,
+      },
+    };
+  }
+
   public static async GetCards() {
-    return await HTTPService.get("/movies/cards", movieCardsSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/cards`,
+      movieCardsSchema,
+      this.cacheOptions(`/${this.urlPrefix}/cards`)
+    );
   }
   public static async Get(id: number) {
-    return await HTTPService.get(`/movies/${id}`, movieSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/${id}`,
+      movieSchema,
+      this.cacheOptions(`/${this.urlPrefix}/${id}`)
+    );
   }
   public static async Add(info: MovieCreateType) {
-    return await HTTPService.post(`/movies`, movieSchema, info);
+    return await HTTPService.post(`/${this.urlPrefix}`, movieSchema, {
+      body: info,
+    });
   }
   public static async Change(id: number, info: MovieCreateType) {
-    return await HTTPService.put(`/movies/${id}`, movieSchema, info);
+    return await HTTPService.put(`/${this.urlPrefix}/${id}`, movieSchema, {
+      body: info,
+    });
   }
 
   public static GetEmpty(): MovieCreateType {

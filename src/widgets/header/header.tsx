@@ -7,12 +7,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import clsx from "clsx";
 import { UserActivities } from "@/features/userActivities";
-
-const sections = [
-  { title: "Игры", href: "/games" },
-  { title: "Фильмы", href: "/movies" },
-  { title: "Аудиокниги", href: "/audiobooks" },
-];
+import { ItemSections, ItemService } from "@/entities/item";
 
 export const Header = () => {
   const currentPageName = useSelectedLayoutSegment();
@@ -25,21 +20,21 @@ export const Header = () => {
       >
         <h1 className="text-4xl font-bold flex items-center">
           <div className="lp:hidden">
-            <MobileMenu sections={sections} />
+            <MobileMenu />
           </div>
           <Link href="/">.Torrent</Link>
         </h1>
         <div className="hidden text-2xl lp:block">
-          {sections.map((section) => (
+          {ItemSections.map((section) => (
             <Link
-              key={section.title}
+              key={section}
               className={clsx(
                 "px-5 cursor-pointer hover:underline underline-offset-2",
-                currentPageName === section.href && "underline"
+                currentPageName === section && "underline"
               )}
-              href={section.href}
+              href={"/" + section}
             >
-              {section.title}
+              {ItemService.itemSections[section].sectionName}
             </Link>
           ))}
         </div>

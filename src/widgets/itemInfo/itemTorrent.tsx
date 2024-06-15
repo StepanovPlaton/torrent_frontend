@@ -93,8 +93,8 @@ export const ItemTorrent = ({
           className="text-right text-sm relative top-4 lp:-top-4"
           href="/how_to_download"
         >
-          Как скачать игру
-          <br /> с помощью .torrent файла?
+          Как скачать с помощью
+          <br /> .torrent файла?
         </Link>
       </div>
     </>

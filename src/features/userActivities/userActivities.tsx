@@ -3,10 +3,11 @@
 import { UserService } from "@/entities/user";
 import { PersonIcon } from "@/shared/assets/icons";
 import Link from "next/link";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import clsx from "clsx";
+import Cookies from "js-cookie";
 import { useState } from "react";
-import { TokenData } from "@/entities/user/schemas/auth";
+import { ItemService } from "@/entities/item";
 
 export const UserActivities = () => {
   const { data: me } = useSWR("user", () => UserService.IdentifyYourself());
@@ -38,13 +39,22 @@ export const UserActivities = () => {
               {[
                 {
                   group: "Добавить:",
-                  items: [
-                    { name: "Добавить игру", link: "/games/add" },
-                    { name: "Добавить фильм", link: "/films/add" },
-                    { name: "Добавить аудиокнигу", link: "/audiobooks/add" },
-                  ],
+                  items: Object.entries(ItemService.itemSections).map(
+                    ([sectionId, section]) => {
+                      return {
+                        name: section.addItemText,
+                        link: `/${sectionId}/add`,
+                      };
+                    }
+                  ),
                 },
-                { name: "Выйти", link: "/logout" },
+                {
+                  name: "Выйти",
+                  onClick: () => {
+                    Cookies.remove("access-token");
+                    mutate("user", undefined);
+                  },
+                },
               ].map((item) => (
                 <ul key={item.group ?? item.name}>
                   {item.group && (
@@ -65,14 +75,14 @@ export const UserActivities = () => {
                       </li>
                     </>
                   )}
-                  {!item.group && item.link && (
-                    <Link
+                  {!item.group && (
+                    <span
                       key={item.name}
                       className="text-xl font-bold py-2 cursor-pointer hover:underline"
-                      href={item.link}
+                      onClick={item.onClick}
                     >
                       {item.name}
-                    </Link>
+                    </span>
                   )}
                 </ul>
               ))}

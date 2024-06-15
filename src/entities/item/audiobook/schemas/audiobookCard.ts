@@ -36,8 +36,5 @@ export const audiobookCardsSchema = z.array(z.any()).transform((a) => {
 });
 
 export const isAudiobook = (a: any): a is AudiobookCardType => {
-  return (
-    audiobookCardBaseSchema.safeParse(a).success &&
-    (a as AudiobookCardType).type === TypesOfItems.audiobook
-  );
+  return (a as AudiobookCardType).type === TypesOfItems.audiobook;
 };

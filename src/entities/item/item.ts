@@ -1,13 +1,9 @@
 import { ZodSchema } from "zod";
-import { gameCreateSchema, gameSchema } from "./game/schemas/game";
-import { movieCreateSchema, movieSchema } from "./movie/schemas/movie";
+import { gameCreateSchema } from "./game/schemas/game";
+import { movieCreateSchema } from "./movie/schemas/movie";
 import { MovieService } from "./movie/movie";
-import { HTTPService } from "@/shared/utils/http";
 import { GameService } from "./game/game";
-import {
-  audiobookCreateSchema,
-  audiobookSchema,
-} from "./audiobook/schemas/audiobook";
+import { audiobookCreateSchema } from "./audiobook/schemas/audiobook";
 import { AudiobookService } from "./audiobook/audiobook";
 import {
   IItemService,
@@ -19,6 +15,7 @@ import {
   TypesOfItems,
   UnionItemType,
 } from "./types";
+import { EraseCacheByTag } from "@/shared/utils/http";
 
 export abstract class ItemService {
   private static get itemsConfiguration(): {
@@ -26,11 +23,7 @@ export abstract class ItemService {
       sectionUrl: ItemSectionsType;
       formResolver: ZodSchema;
       propertiesDescription: ItemPropertiesDescriptionType<UnionItemType>;
-      AddItem: (itemInfo: ItemCreateType) => Promise<ItemType | null>;
-      ChangeItem: (
-        id: number,
-        itemInfo: ItemCreateType
-      ) => Promise<ItemType | null>;
+      service: IItemService;
     };
   } {
     return {
@@ -38,57 +31,63 @@ export abstract class ItemService {
         sectionUrl: "games",
         formResolver: gameCreateSchema,
         propertiesDescription: GameService.propertiesDescription,
-        AddItem: async (itemInfo) =>
-          await HTTPService.post(`/games`, gameSchema, itemInfo),
-        ChangeItem: async (id: number, itemInfo) =>
-          await HTTPService.put(`/games/${id}`, gameSchema, itemInfo),
+        service: GameService,
       },
       [TypesOfItems.movie]: {
         sectionUrl: "movies",
         formResolver: movieCreateSchema,
         propertiesDescription: MovieService.propertiesDescription,
-        AddItem: async (itemInfo) =>
-          await HTTPService.post(`/movies`, movieSchema, itemInfo),
-        ChangeItem: async (id: number, itemInfo) =>
-          await HTTPService.put(`/movies/${id}`, movieSchema, itemInfo),
+        service: MovieService,
       },
       [TypesOfItems.audiobook]: {
         sectionUrl: "audiobooks",
         formResolver: audiobookCreateSchema,
         propertiesDescription: AudiobookService.propertiesDescription,
-        AddItem: async (itemInfo) =>
-          await HTTPService.post(`/audiobooks`, audiobookSchema, itemInfo),
-        ChangeItem: async (id: number, itemInfo) =>
-          await HTTPService.put(`/audiobooks/${id}`, audiobookSchema, itemInfo),
+        service: AudiobookService,
       },
     };
   }
 
   static get itemSections(): {
     [k in ItemSectionsType]: {
+      sectionName: string;
       itemType: TypesOfItems;
       popularSubsectionName: string;
       sectionInviteText: string;
+      addItemText: string;
+      sectionDescription: string;
       service: IItemService;
     };
   } {
     return {
       games: {
+        sectionName: "Игры",
         itemType: TypesOfItems.game,
         popularSubsectionName: "Популярные игры",
         sectionInviteText: 'Перейти в раздел "Игры"',
+        addItemText: "Добавить игру",
+        sectionDescription:
+          "каталог .torrent файлов для обмена актуальными версиями популярных игр",
         service: GameService,
       },
       movies: {
+        sectionName: "Фильмы",
         itemType: TypesOfItems.movie,
         popularSubsectionName: "Популярные фильмы",
         sectionInviteText: 'Перейти в раздел "Фильмы"',
+        addItemText: "Добавить фильм",
+        sectionDescription:
+          "каталог .torrent файлов для обмена популярными фильмами в лучшем качестве",
         service: MovieService,
       },
       audiobooks: {
+        sectionName: "Аудиокниги",
         itemType: TypesOfItems.audiobook,
         popularSubsectionName: "Популярные аудиокниги",
         sectionInviteText: 'Перейти в раздел "Аудиокниги"',
+        addItemText: "Добавить аудиокнигу",
+        sectionDescription:
+          "каталог .torrent файлов для обмена популярными аудиокнигами любимых авторов",
         service: AudiobookService,
       },
     };
@@ -120,12 +119,29 @@ export abstract class ItemService {
   }
 
   public static async AddItem(itemInfo: ItemCreateType) {
-    return await this.itemsConfiguration[itemInfo.type].AddItem(itemInfo);
+    const item = await this.itemsConfiguration[itemInfo.type].service.Add(
+      itemInfo
+    );
+
+    if (item)
+      EraseCacheByTag(
+        `/${this.itemsConfiguration[itemInfo.type].service.urlPrefix}/${
+          item.id
+        }`
+      );
+    return item;
   }
   public static async ChangeItem(id: number, itemInfo: ItemCreateType) {
-    return await this.itemsConfiguration[itemInfo.type].ChangeItem(
+    const item = await this.itemsConfiguration[itemInfo.type].service.Change(
       id,
       itemInfo
     );
+    if (item)
+      EraseCacheByTag(
+        `/${this.itemsConfiguration[itemInfo.type].service.urlPrefix}/${
+          item.id
+        }`
+      );
+    return item;
   }
 }

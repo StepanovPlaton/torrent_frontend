@@ -1,30 +1,43 @@
 import { UserService } from "@/entities/user";
 import { z } from "zod";
 
-type Body = BodyInit | object;
+export type RequestCacheOptions = {
+  cache?: RequestCache;
+  next?: NextFetchRequestConfig;
+};
+
+type GetRequestOptions = RequestCacheOptions & {
+  headers?: HeadersInit;
+};
+
+type RequestOptions = GetRequestOptions & {
+  body?: BodyInit | object;
+  stringify?: boolean;
+};
 
 export abstract class HTTPService {
   public static async request<Z extends z.ZodTypeAny>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
     schema: Z,
-    body?: Body,
-    headers?: HeadersInit,
-    stringify?: boolean
+    options?: RequestOptions
   ) {
     return await fetch(process.env.NEXT_PUBLIC_BASE_URL + url, {
       method: method,
       headers: {
         accept: "application/json",
-        ...((stringify ?? true) != true
+        ...((options?.stringify ?? true) != true
           ? {}
           : { "Content-Type": "application/json" }),
         Authorization: "Bearer " + UserService.GetToken(),
-        ...headers,
+        ...options?.headers,
       },
       body:
-        (stringify ?? true) != true ? (body as BodyInit) : JSON.stringify(body),
-      cache: "no-cache",
+        (options?.stringify ?? true) != true
+          ? (options?.body as BodyInit)
+          : JSON.stringify(options?.body),
+      cache: options?.cache ?? options?.next ? undefined : "no-cache",
+      next: options?.next ?? {},
     })
       .then((r) => {
         if (r && r.ok) return r;
@@ -42,27 +55,27 @@ export abstract class HTTPService {
       });
   }
 
-  public static async get<Z extends z.ZodTypeAny>(url: string, schema: Z) {
-    return await this.request<Z>("GET", url, schema);
+  public static async get<Z extends z.ZodTypeAny>(
+    url: string,
+    schema: Z,
+    options?: GetRequestOptions
+  ) {
+    return await this.request<Z>("GET", url, schema, options);
   }
 
   public static async post<Z extends z.ZodTypeAny>(
     url: string,
     schema: Z,
-    body?: Body,
-    headers?: HeadersInit,
-    stringify?: boolean
+    options?: RequestOptions
   ) {
-    return await this.request<Z>("POST", url, schema, body, headers, stringify);
+    return await this.request<Z>("POST", url, schema, options);
   }
 
   public static async put<Z extends z.ZodType>(
     url: string,
     schema: Z,
-    body?: Body,
-    headers?: HeadersInit,
-    stringify?: boolean
+    options?: RequestOptions
   ) {
-    return await this.request<Z>("PUT", url, schema, body, headers, stringify);
+    return await this.request<Z>("PUT", url, schema, options);
   }
 }

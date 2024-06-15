@@ -2,11 +2,22 @@ import { isSection, ItemService, MovieService } from "@/entities/item";
 import { ItemCard } from "@/features/itemCard";
 import { Section } from "@/widgets/section";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
-//export const metadata: Metadata = {
-//  title: ".Torrent: Фильмы",
-//  description: ".Torrent: Фильмы - каталог .torrent файлов для обмена фильмами",
-//};
+export async function generateMetadata({
+  params: { section },
+}: {
+  params: { section: string };
+}): Promise<Metadata> {
+  if (!isSection(section)) {
+    redirect("/");
+    return {};
+  }
+  return {
+    title: `.Torrent: ${ItemService.itemSections[section].sectionName}`,
+    description: `.Torrent: ${ItemService.itemSections[section].sectionName} - ${ItemService.itemSections[section].sectionName}`,
+  };
+}
 
 export default async function SectionPage({
   params: { section },

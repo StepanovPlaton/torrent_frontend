@@ -4,7 +4,7 @@ import { movieCardBaseSchema } from "./movieCard";
 export const movieBaseSchema = movieCardBaseSchema.merge(
   z.object({
     torrent_file: z.string().min(3, "У раздачи должен быть .torrent файл"),
-    trailer: z.string().optional(),
+    trailer: z.string().optional().nullable(),
 
     language: z.string().optional().nullable(),
     subtitles: z.string().optional().nullable(),
@@ -46,14 +46,14 @@ export const movieSchema = movieBaseSchema.merge(
 );
 export type MovieType = z.infer<typeof movieSchema>;
 
-export const isMovie = (a: any): a is MovieType => {
+export const isMovieStrict = (a: any): a is MovieType => {
   return movieSchema.safeParse(a).success;
 };
 
 export const moviesSchema = z.array(z.any()).transform((a) => {
   const games: MovieType[] = [];
   a.forEach((e) => {
-    if (isMovie(e)) games.push(movieSchema.parse(e));
+    if (isMovieStrict(e)) games.push(movieSchema.parse(e));
     else console.error("Movie parse error - ", e);
   });
   return games;

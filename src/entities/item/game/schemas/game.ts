@@ -4,7 +4,7 @@ import { gameCardBaseSchema } from "./gameCard";
 export const gameBaseSchema = gameCardBaseSchema.merge(
   z.object({
     torrent_file: z.string().min(3, "У раздачи должен быть .torrent файл"),
-    trailer: z.string().optional(),
+    trailer: z.string().optional().nullable(),
 
     system: z.string().optional().nullable(),
     processor: z.string().optional().nullable(),
@@ -49,14 +49,14 @@ export const gameSchema = gameBaseSchema.merge(
 );
 export type GameType = z.infer<typeof gameSchema>;
 
-export const isGame = (a: any): a is GameType => {
+export const isGameStrict = (a: any): a is GameType => {
   return gameSchema.safeParse(a).success;
 };
 
 export const gamesSchema = z.array(z.any()).transform((a) => {
   const games: GameType[] = [];
   a.forEach((e) => {
-    if (isGame(e)) games.push(gameSchema.parse(e));
+    if (isGameStrict(e)) games.push(gameSchema.parse(e));
     else console.error("Game parse error - ", e);
   });
   return games;

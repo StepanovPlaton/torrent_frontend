@@ -1,6 +1,12 @@
 "use client";
 
-import { isAudiobook, isGame, ItemCreateType, ItemType } from "@/entities/item";
+import {
+  isAudiobook,
+  isGame,
+  isMovie,
+  ItemCreateType,
+  ItemType,
+} from "@/entities/item";
 import { UserService } from "@/entities/user";
 import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
@@ -12,8 +18,8 @@ import { ItemProperties } from "./itemProperties";
 import { ItemTrailer } from "./itemTrailer";
 import { ItemTorrent } from "./itemTorrent";
 import { ItemDetails } from "./itemDetails";
-import { isMovie } from "@/entities/item/movie/schemas/movie";
 import { ItemFragment } from "./itemFragment";
+import { EraseCacheByTag } from "@/shared/utils/http";
 
 export const ItemInfo = <T extends ItemType | ItemCreateType>({
   item: init_item,

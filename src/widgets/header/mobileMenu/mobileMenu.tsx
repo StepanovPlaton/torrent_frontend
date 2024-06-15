@@ -1,14 +1,11 @@
 "use client";
 
+import { ItemSections, ItemService } from "@/entities/item";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
 
-export const MobileMenu = ({
-  sections,
-}: {
-  sections: { title: string; href: string }[];
-}) => {
+export const MobileMenu = () => {
   const [open, changeMenuOpen] = useState<boolean>(false);
 
   return (
@@ -35,13 +32,13 @@ export const MobileMenu = ({
         )}
         onClick={() => changeMenuOpen(false)}
       >
-        {sections.map((section) => (
+        {ItemSections.map((section) => (
           <Link
-            key={section.title}
+            key={section}
             className="text-xl py-2 cursor-pointer hover:underline"
-            href={section.href}
+            href={"/" + section}
           >
-            {section.title}
+            {ItemService.itemSections[section].sectionName}
           </Link>
         ))}
       </div>

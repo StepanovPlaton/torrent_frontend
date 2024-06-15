@@ -1,4 +1,4 @@
-import { HTTPService } from "@/shared/utils/http";
+import { HTTPService, RequestCacheOptions } from "@/shared/utils/http";
 import { audiobookCardsSchema } from "./schemas/audiobookCard";
 import {
   AudiobookCreateType,
@@ -17,17 +17,40 @@ import { ItemService } from "../item";
 
 @staticImplements<IItemService>()
 export abstract class AudiobookService {
+  public static cacheTag = "all_audiobooks";
+  public static urlPrefix = "audiobooks";
+  private static cacheOptions(custom_tag?: string): RequestCacheOptions {
+    return {
+      next: {
+        tags: custom_tag ? [this.cacheTag, custom_tag] : [this.cacheTag],
+        revalidate: 60 * 5,
+      },
+    };
+  }
+
   public static async GetCards() {
-    return await HTTPService.get("/audiobooks/cards", audiobookCardsSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/cards`,
+      audiobookCardsSchema,
+      this.cacheOptions(`/${this.urlPrefix}/cards`)
+    );
   }
   public static async Get(id: number) {
-    return await HTTPService.get(`/audiobooks/${id}`, audiobookSchema);
+    return await HTTPService.get(
+      `/${this.urlPrefix}/${id}`,
+      audiobookSchema,
+      this.cacheOptions(`/${this.urlPrefix}/${id}`)
+    );
   }
   public static async Add(info: AudiobookCreateType) {
-    return await HTTPService.post(`/audiobooks`, audiobookSchema, info);
+    return await HTTPService.post(`/${this.urlPrefix}`, audiobookSchema, {
+      body: info,
+    });
   }
   public static async Change(id: number, info: AudiobookCreateType) {
-    return await HTTPService.put(`/audiobooks/${id}`, audiobookSchema, info);
+    return await HTTPService.put(`/${this.urlPrefix}/${id}`, audiobookSchema, {
+      body: info,
+    });
   }
 
   public static GetEmpty(): AudiobookCreateType {

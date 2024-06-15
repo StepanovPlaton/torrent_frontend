@@ -1,5 +1,5 @@
 import { ItemCreateType, ItemType } from "@/entities/item";
-import { getYouTubeID } from "@/shared/utils";
+import { getYouTubeID } from "@/shared/utils/getYoutubeId";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 export const ItemTrailer = ({
@@ -9,8 +9,8 @@ export const ItemTrailer = ({
   setFormValue: setValue,
   registerFormField: register,
 }: {
-  trailer: string | undefined;
-  default_trailer: string | undefined;
+  trailer: string | undefined | null;
+  default_trailer: string | undefined | null;
   editable: boolean;
   setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
   registerFormField: UseFormRegister<ItemType | ItemCreateType>;

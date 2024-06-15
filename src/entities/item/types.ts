@@ -49,6 +49,8 @@ export type ItemPropertiesDescriptionType<T extends ItemType | ItemCreateType> =
   }[][];
 
 export interface IItemService {
+  cacheTag: string;
+  urlPrefix: string;
   GetCards(): Promise<ItemCardType[] | null>;
   Get(id: number): Promise<ItemType | null>;
   Add(info: ItemCreateType): Promise<ItemType | null>;
