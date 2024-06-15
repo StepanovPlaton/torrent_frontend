@@ -1,5 +1,11 @@
-import { GameService } from "@/entities/game";
-import { GameCard } from "@/features/gameCard";
+import {
+  isSection,
+  ItemCardType,
+  ItemSections,
+  ItemSectionsType,
+  ItemService,
+} from "@/entities/item";
+import { ItemCard } from "@/features/itemCard";
 import { Section } from "@/widgets/section";
 import { Metadata } from "next";
 
@@ -10,20 +16,32 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const gameCards = await GameService.GetGameCards();
+  const cards: { [k in ItemSectionsType]?: ItemCardType[] | null } = {};
+  await Promise.all(
+    ItemSections.map(async (section) => {
+      cards[section] = await ItemService.itemSections[
+        section
+      ].service.GetCards();
+    })
+  );
+
   return (
     <>
-      {gameCards && gameCards.length > 0 && (
-        <Section
-          name="Игры"
-          link="/games"
-          invite_text={'Перейти в раздел "Игры"'}
-        >
-          {gameCards.map((card) => (
-            <GameCard key={card.id} card={card} />
-          ))}
-        </Section>
-      )}
+      {ItemSections.map((section) => (
+        <section key={section}>
+          {cards[section] && cards[section].length > 0 && (
+            <Section
+              name={ItemService.itemSections[section].popularSubsectionName}
+              link={isSection(section) ? `/${section}` : undefined}
+              invite_text={ItemService.itemSections[section].sectionInviteText}
+            >
+              {cards[section].map((card) => (
+                <ItemCard key={card.id} card={card} />
+              ))}
+            </Section>
+          )}
+        </section>
+      ))}
     </>
   );
 }

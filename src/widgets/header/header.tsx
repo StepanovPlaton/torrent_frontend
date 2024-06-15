@@ -9,9 +9,9 @@ import clsx from "clsx";
 import { UserActivities } from "@/features/userActivities";
 
 const sections = [
-  { title: "Игры", href: "games" },
-  { title: "Фильмы", href: "films" },
-  { title: "Аудиокниги", href: "audiobooks" },
+  { title: "Игры", href: "/games" },
+  { title: "Фильмы", href: "/movies" },
+  { title: "Аудиокниги", href: "/audiobooks" },
 ];
 
 export const Header = () => {

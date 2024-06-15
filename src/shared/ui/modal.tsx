@@ -13,7 +13,7 @@ export const Modal = ({ children }: { children: React.ReactNode }) => {
         !closing && "animate-fadeIn",
         closing && "animate-fadeOut opacity-0",
         "flex items-center justify-around",
-        "absolute z-20 left-0 w-full h-full bg-[#000000c5]"
+        "absolute z-30 left-0 w-full h-full bg-[#000000c5]"
       )}
       onClick={() => {
         setClosing(true);
