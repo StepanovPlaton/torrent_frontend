@@ -84,6 +84,7 @@ export const ItemInfo = <T extends ItemType | ItemCreateType>({
 
   const onSubmit = async (formData: ItemCreateType) => {
     changeSavedTimeout(null);
+    console.log(formData);
     const updatedItem = ItemService.isExistingItem(item)
       ? await ItemService.ChangeItem(item.id, formData)
       : await ItemService.AddItem(formData);

@@ -16,12 +16,24 @@ type RequestOptions = GetRequestOptions & {
 };
 
 export abstract class HTTPService {
+  private static deepUndefinedToNull(o?: object): object | undefined {
+    if (o)
+      return Object.fromEntries(
+        Object.entries(o).map(([k, v]) => {
+          if (v === undefined) return [k, null];
+          if (typeof v === "object") return [k, this.deepUndefinedToNull(v)];
+          return [k, v];
+        })
+      );
+  }
+
   public static async request<Z extends z.ZodTypeAny>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
     schema: Z,
     options?: RequestOptions
   ) {
+    console.log(options?.body);
     return await fetch(process.env.NEXT_PUBLIC_BASE_URL + url, {
       method: method,
       headers: {
@@ -35,7 +47,9 @@ export abstract class HTTPService {
       body:
         (options?.stringify ?? true) != true
           ? (options?.body as BodyInit)
-          : JSON.stringify(options?.body),
+          : JSON.stringify(
+              this.deepUndefinedToNull(options?.body as object | undefined)
+            ),
       cache: options?.cache ?? options?.next ? undefined : "no-cache",
       next: options?.next ?? {},
     })

@@ -52,7 +52,7 @@ export const ItemFragment = ({
       className="relative w-full flex items-center justify-around pt-4"
       {...(editable ? getFragmentDropRootProps() : {})}
     >
-      <div className="flex flex-col items-center w-[80%] h-20">
+      <div className="flex flex-col items-center w-[80%] h-14 lp:h-20">
         <audio
           controls
           controlsList="nodownload"

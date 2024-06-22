@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# .Torrent frontend
+> .Torrent - сервис обмена .torrent файлами видеоигр, фильмов и аудиокниг
 
-## Getting Started
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Стек
+- TypeScript
+- React 18
+- Next.js 14 (App Router)
+- Tailwind CSS
+- Zod
+- SWR
+- clsx
+- React Hook Form
+- и другие
+  - next-themes
+  - js-cookie
+  - jwt-decode
+  - react-dropzone
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Возможности
+- Главная страница со списком популярных видеоигр, фильмов, аудиокниг
+- Страницы со списками по категориям (отдельно видеоигры, фильмы, аудиокниги)
+- Страница просмотра, редактирования или добавления сущности
+- Форма входа или регистрации в виде модального окна с помощью Parallel и Intercepting маршрутов в Next.js
+- Адаптивная верстка. Корректное отображение на мобильных устройствах, планшетах, ноутбуках, десктопах
+- SEO оптимизация. SSR, метаданные к страницам
+- Валидация данных с помощью Zod. Некорректные (или неполные) данные вырезаются (если некорректна одна сущность из списка, то остальные отображаются)
+- Структура проекта в соответствии с Feature-Sliced Design
+- Цветовая схема Gruvbox. Возможность переключения тёмной и светлой темы
+- Вся конфигурация через файл .env (или переменные среды), для удобного запуска в Docker контейнере
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Скриншоты
+|![](./screenshots/main_mobile.png)|![](./screenshots/movie_mobile.png)|
+|-|-|
+|![](./screenshots/main.png)|![](./screenshots/movies.png)|
+|![](./screenshots/game.png)|![](./screenshots/movie.png)|
+|![](./screenshots/game_editing.png)|![](./screenshots/game_create.png)|
+|![](./screenshots/login.png)|![](./screenshots/registration.png)|
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Запуск
+### Локально
+    npm install
+    npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## ToDo
+- [ ] Dockerfile
+- [ ] Добавить ссылку на общий репозиторий
+- [ ] Теги жанров для сущностей
+- [ ] Поиск
+- [ ] Динамические метаданные к страницам [section]/*
+- [ ] Страница "О проекте"

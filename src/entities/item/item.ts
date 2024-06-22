@@ -15,7 +15,7 @@ import {
   TypesOfItems,
   UnionItemType,
 } from "./types";
-import { EraseCacheByTag } from "@/shared/utils/http";
+import { EraseCacheByTags } from "@/shared/utils/http";
 
 export abstract class ItemService {
   private static get itemsConfiguration(): {
@@ -122,13 +122,7 @@ export abstract class ItemService {
     const item = await this.itemsConfiguration[itemInfo.type].service.Add(
       itemInfo
     );
-
-    if (item)
-      EraseCacheByTag(
-        `/${this.itemsConfiguration[itemInfo.type].service.urlPrefix}/${
-          item.id
-        }`
-      );
+    this.UpdateCachedData(item);
     return item;
   }
   public static async ChangeItem(id: number, itemInfo: ItemCreateType) {
@@ -136,12 +130,14 @@ export abstract class ItemService {
       id,
       itemInfo
     );
-    if (item)
-      EraseCacheByTag(
-        `/${this.itemsConfiguration[itemInfo.type].service.urlPrefix}/${
-          item.id
-        }`
-      );
+    this.UpdateCachedData(item);
     return item;
+  }
+
+  private static UpdateCachedData(item: ItemType | null) {
+    if (item) {
+      const tagPrefix = this.itemsConfiguration[item.type].service.urlPrefix;
+      EraseCacheByTags([`/${tagPrefix}/${item.id}`, `/${tagPrefix}/cards`]);
+    }
   }
 }
