@@ -1,11 +1,6 @@
-import {
-  isSection,
-  ItemCardType,
-  ItemSections,
-  ItemSectionsType,
-  ItemService,
-} from "@/entities/item";
-import { ItemCard } from "@/features/itemCard";
+import { ItemCardType, ItemService } from "@/entities/item";
+import { ItemCard } from "@/widgets/itemCard";
+import { SectionService, SectionType } from "@/features/sections";
 import { Section } from "@/widgets/section";
 import { Metadata } from "next";
 
@@ -16,24 +11,31 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const cards: { [k in ItemSectionsType]?: ItemCardType[] | null } = {};
+  const cards: { [k in SectionType]?: ItemCardType[] | null } = {};
   await Promise.all(
-    ItemSections.map(async (section) => {
-      cards[section] = await ItemService.itemSections[
-        section
+    SectionService.sections.map(async (section) => {
+      cards[section] = await ItemService.itemsConfiguration[
+        SectionService.sectionsConfiguration[section].itemType
       ].service.GetCards();
     })
   );
 
   return (
     <>
-      {ItemSections.map((section) => (
+      {SectionService.sections.map((section) => (
         <section key={section}>
           {cards[section] && cards[section].length > 0 && (
             <Section
-              name={ItemService.itemSections[section].popularSubsectionName}
-              link={isSection(section) ? `/${section}` : undefined}
-              invite_text={ItemService.itemSections[section].sectionInviteText}
+              name={
+                SectionService.sectionsConfiguration[section]
+                  .popularSubsectionName
+              }
+              link={
+                SectionService.isSection(section) ? `/${section}` : undefined
+              }
+              invite_text={
+                SectionService.sectionsConfiguration[section].sectionInviteText
+              }
             >
               {cards[section].map((card) => (
                 <ItemCard key={card.id} card={card} />

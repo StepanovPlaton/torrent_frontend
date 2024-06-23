@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import clsx from "clsx";
 import { UserActivities } from "@/features/userActivities";
-import { ItemSections, ItemService } from "@/entities/item";
+import { SectionService } from "@/features/sections";
 
 export const Header = () => {
   const currentPageName = useSelectedLayoutSegment();
@@ -25,7 +25,7 @@ export const Header = () => {
           <Link href="/">.Torrent</Link>
         </h1>
         <div className="hidden text-2xl lp:block">
-          {ItemSections.map((section) => (
+          {SectionService.sections.map((section) => (
             <Link
               key={section}
               className={clsx(
@@ -34,7 +34,7 @@ export const Header = () => {
               )}
               href={"/" + section}
             >
-              {ItemService.itemSections[section].sectionName}
+              {SectionService.sectionsConfiguration[section].sectionName}
             </Link>
           ))}
         </div>

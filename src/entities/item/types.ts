@@ -16,30 +16,12 @@ export type ItemCreateType =
   | AudiobookCreateType;
 
 export type UnionItemType = GameType & MovieType & AudiobookType;
-export type UnionItemCardType = GameCardType &
-  MovieCardType &
-  AudiobookCardType;
-export type UnionItemCreateType = GameCreateType &
-  MovieCreateType &
-  AudiobookCreateType;
 
 export enum TypesOfItems {
   game,
   movie,
   audiobook,
 }
-
-export type ItemSectionsType = "games" | "movies" | "audiobooks";
-export const ItemSections = [
-  "games",
-  "movies",
-  "audiobooks",
-] as ItemSectionsType[];
-
-export const isSection = (a: string): a is ItemSectionsType => {
-  return (ItemSections as string[]).includes(a);
-};
-
 export type ItemPropertiesDescriptionType<T extends ItemType | ItemCreateType> =
   {
     name: string;

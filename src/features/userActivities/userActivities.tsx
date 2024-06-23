@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 import clsx from "clsx";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { ItemService } from "@/entities/item";
+import { SectionService } from "../sections";
 
 export const UserActivities = () => {
   const { data: me } = useSWR("user", () => UserService.IdentifyYourself());
@@ -39,14 +39,13 @@ export const UserActivities = () => {
               {[
                 {
                   group: "Добавить:",
-                  items: Object.entries(ItemService.itemSections).map(
-                    ([sectionId, section]) => {
-                      return {
-                        name: section.addItemText,
-                        link: `/${sectionId}/add`,
-                      };
-                    }
-                  ),
+                  items: SectionService.sections.map((section) => {
+                    return {
+                      name: SectionService.sectionsConfiguration[section]
+                        .addItemText,
+                      link: `/${SectionService.sectionsConfiguration[section].sectionUrl}/add`,
+                    };
+                  }),
                 },
                 {
                   name: "Выйти",

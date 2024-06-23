@@ -33,7 +33,6 @@ export abstract class HTTPService {
     schema: Z,
     options?: RequestOptions
   ) {
-    console.log(options?.body);
     return await fetch(process.env.NEXT_PUBLIC_BASE_URL + url, {
       method: method,
       headers: {

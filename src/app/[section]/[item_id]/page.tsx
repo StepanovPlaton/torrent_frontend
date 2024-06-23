@@ -1,5 +1,6 @@
-import { GameService, GameType, isSection, ItemService } from "@/entities/item";
-import { ItemCard } from "@/features/itemCard";
+import { ItemService } from "@/entities/item";
+import { SectionService } from "@/features/sections";
+import { ItemCard } from "@/widgets/itemCard";
 import { ItemInfo } from "@/widgets/itemInfo";
 import { Section } from "@/widgets/section";
 import { redirect } from "next/navigation";
@@ -9,13 +10,17 @@ export default async function Item({
 }: {
   params: { section: string; item_id: number };
 }) {
-  const game = isSection(section)
-    ? await ItemService.itemSections[section].service.Get(item_id)
+  const game = SectionService.isSection(section)
+    ? await ItemService.itemsConfiguration[
+        SectionService.sectionsConfiguration[section].itemType
+      ].service.Get(item_id)
     : redirect("/");
 
   const cards =
-    isSection(section) &&
-    (await ItemService.itemSections[section].service.GetCards());
+    SectionService.isSection(section) &&
+    (await ItemService.itemsConfiguration[
+      SectionService.sectionsConfiguration[section].itemType
+    ].service.GetCards());
 
   return (
     <>
@@ -24,14 +29,15 @@ export default async function Item({
       {cards && (
         <Section
           name={
-            isSection(section)
-              ? ItemService.itemSections[section].popularSubsectionName
+            SectionService.isSection(section)
+              ? SectionService.sectionsConfiguration[section]
+                  .popularSubsectionName
               : undefined
           }
-          link={isSection(section) ? `/${section}` : undefined}
+          link={SectionService.isSection(section) ? `/${section}` : undefined}
           invite_text={
-            isSection(section)
-              ? ItemService.itemSections[section].sectionInviteText
+            SectionService.isSection(section)
+              ? SectionService.sectionsConfiguration[section].sectionInviteText
               : undefined
           }
         >

@@ -5,6 +5,7 @@ import {
   ItemCardType,
   ItemService,
 } from "@/entities/item";
+import { SectionService } from "@/features/sections";
 import { Img } from "@/shared/ui";
 import Link from "next/link";
 
@@ -12,7 +13,14 @@ export const ItemCard = ({ card }: { card: ItemCardType }) => {
   return (
     <Link
       className="group/itemcard cursor-pointer"
-      href={"/" + ItemService.GetSectionUrlByItemType(card) + "/" + card.id}
+      href={
+        "/" +
+        SectionService.sectionsConfiguration[
+          SectionService.itemTypeToSection[card.type]
+        ].sectionUrl +
+        "/" +
+        card.id
+      }
     >
       {!!card.cover && (
         <Img

@@ -44,15 +44,15 @@ export const ItemInfo = <T extends ItemType | ItemCreateType>({
     register,
     handleSubmit,
     setValue,
+    setError,
     watch,
     reset,
     formState: { dirtyFields, errors },
   } = useForm<ItemType | ItemCreateType>({
-    // Unfortunately, react hook form does not accept generic type correctly
-    // useForm<T> causes an error when calling register(key) ->
-    //    key is not assignable to parameter of type 'Path<T>'
     defaultValues: init_item,
-    resolver: zodResolver(ItemService.GetFormResolver(item)),
+    resolver: zodResolver(
+      ItemService.itemsConfiguration[item.type].formResolver
+    ),
   });
 
   useEffect(() => {
@@ -72,7 +72,6 @@ export const ItemInfo = <T extends ItemType | ItemCreateType>({
   useEffect(() => {
     if (!Object.keys(dirtyFields).length) return;
     if (JSON.stringify(watchedData) === JSON.stringify(formData)) return;
-    console.log(dirtyFields);
     changeFormData(watchedData as T);
     if (savedTimeout) clearTimeout(savedTimeout);
     changeSavedTimeout(
@@ -83,14 +82,15 @@ export const ItemInfo = <T extends ItemType | ItemCreateType>({
   }, [watchedData]);
 
   const onSubmit = async (formData: ItemCreateType) => {
-    changeSavedTimeout(null);
-    console.log(formData);
     const updatedItem = ItemService.isExistingItem(item)
       ? await ItemService.ChangeItem(item.id, formData)
       : await ItemService.AddItem(formData);
+    changeSavedTimeout(null);
     if (updatedItem) {
       changeItem(updatedItem as T);
       reset({}, { keepValues: true });
+    } else {
+      setError("root", { message: "Ошибка сервера" });
     }
   };
 

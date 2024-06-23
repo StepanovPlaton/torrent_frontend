@@ -85,20 +85,16 @@ import { ItemService } from "./item";
 export { ItemService };
 
 import {
-  isSection,
+  TypesOfItems,
+  type IItemService,
   type ItemType,
   type ItemCardType,
   type ItemCreateType,
-  type TypesOfItems,
-  type ItemSectionsType,
-  ItemSections,
 } from "./types";
 export {
-  isSection,
+  TypesOfItems,
+  type IItemService,
   type ItemType,
   type ItemCardType,
   type ItemCreateType,
-  type TypesOfItems,
-  type ItemSectionsType,
-  ItemSections,
 };
