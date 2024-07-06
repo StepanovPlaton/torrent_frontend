@@ -1,21 +1,25 @@
 import { FilesService } from "@/entities/files";
-import { ItemCreateType, ItemType } from "@/entities/item";
-import { useCallback } from "react";
+import { ItemCreateType } from "@/entities/item";
+import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import clsx from "clsx";
 
 export const ItemFragment = ({
   fragment,
   editable,
-  setFormValue: setValue,
-  registerFormField: register,
 }: {
   fragment: string | undefined | null;
   editable: boolean;
-  setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
-  registerFormField: UseFormRegister<ItemType | ItemCreateType>;
 }) => {
+  const { register, setValue, watch } = useFormContext<ItemCreateType>();
+
+  const watched_fragment = watch("fragment");
+
+  useEffect(() => {
+    register("fragment", { value: fragment });
+  }, [fragment, register]);
+
   const onFragmentDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -57,8 +61,15 @@ export const ItemFragment = ({
           controls
           controlsList="nodownload"
           typeof="audio/mpeg"
-          src={process.env.NEXT_PUBLIC_FRAGMENT_URL + "/" + (fragment ?? "")}
-          className={clsx(!fragment && "pointer-events-none", "w-full h-full")}
+          src={
+            process.env.NEXT_PUBLIC_FRAGMENT_URL +
+            "/" +
+            (watched_fragment ?? "")
+          }
+          className={clsx(
+            !watched_fragment && "pointer-events-none",
+            "w-full h-full"
+          )}
         />
         {editable && (
           <>

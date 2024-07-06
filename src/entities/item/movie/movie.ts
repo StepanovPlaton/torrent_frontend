@@ -10,6 +10,17 @@ import {
   TypesOfItems,
 } from "../types";
 import { ItemService } from "../item";
+import {
+  MovieGenreCreateType,
+  movieGenreSchema,
+  movieGenresSchema,
+} from "./schemas/genre";
+import {
+  MovieActorCreateType,
+  movieActorSchema,
+  movieActorsSchema,
+} from "./schemas/actors";
+import { RequiredFrom } from "@/shared/utils/types";
 
 @staticImplements<IItemService>()
 export abstract class MovieService {
@@ -26,7 +37,7 @@ export abstract class MovieService {
 
   public static async GetCards() {
     return await HTTPService.get(
-      `/${this.urlPrefix}/cards`,
+      `/${this.urlPrefix}`,
       movieCardsSchema,
       this.cacheOptions(`/${this.urlPrefix}/cards`)
     );
@@ -49,12 +60,39 @@ export abstract class MovieService {
     });
   }
 
-  public static GetEmpty(): MovieCreateType {
+  public static GetEmpty(): RequiredFrom<MovieCreateType> {
     return {
       title: "",
       torrent_file: "",
       type: TypesOfItems.movie,
     };
+  }
+
+  public static async GetGenres() {
+    return await HTTPService.get(
+      `/genres/${this.urlPrefix}`,
+      movieGenresSchema
+    );
+  }
+
+  public static async CreateGenre(info: MovieGenreCreateType) {
+    return await HTTPService.post(
+      `/genres/${this.urlPrefix}`,
+      movieGenreSchema,
+      {
+        body: info,
+      }
+    );
+  }
+
+  public static async GetActors() {
+    return await HTTPService.get(`/actors`, movieActorsSchema);
+  }
+
+  public static async CreateActor(info: MovieActorCreateType) {
+    return await HTTPService.post(`/actors`, movieActorSchema, {
+      body: info,
+    });
   }
 
   public static propertiesDescription: ItemPropertiesDescriptionType<MovieType> =

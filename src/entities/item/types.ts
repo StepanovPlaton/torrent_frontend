@@ -7,6 +7,13 @@ import {
   AudiobookType,
 } from "./audiobook/schemas/audiobook";
 import { AudiobookCardType } from "./audiobook/schemas/audiobookCard";
+import { GameGenreCreateType, GameGenreType } from "./game/schemas/genre";
+import { MovieGenreCreateType, MovieGenreType } from "./movie/schemas/genre";
+import {
+  AudiobookGenreCreateType,
+  AudiobookGenreType,
+} from "./audiobook/schemas/genre";
+import { MovieActorType } from "./movie/schemas/actors";
 
 export type ItemType = GameType | MovieType | AudiobookType;
 export type ItemCardType = GameCardType | MovieCardType | AudiobookCardType;
@@ -14,8 +21,19 @@ export type ItemCreateType =
   | GameCreateType
   | MovieCreateType
   | AudiobookCreateType;
-
 export type UnionItemType = GameType & MovieType & AudiobookType;
+
+export type GenreType = GameGenreType | MovieGenreType | AudiobookGenreType;
+export type CreateGenreType =
+  | GameGenreCreateType
+  | MovieGenreCreateType
+  | AudiobookGenreCreateType;
+
+export type ItemListPropertyType = GenreType | MovieActorType;
+
+export const isGenre = (g: any): g is GenreType => {
+  return (g as GenreType).genre !== undefined;
+};
 
 export enum TypesOfItems {
   game,
@@ -39,6 +57,8 @@ export interface IItemService {
   Change(id: number, info: ItemCreateType): Promise<ItemType | null>;
   GetEmpty(): ItemCreateType;
   propertiesDescription: ItemPropertiesDescriptionType<UnionItemType>;
+  CreateGenre(info: CreateGenreType): Promise<GenreType | null>;
+  GetGenres(): Promise<GenreType[] | null>;
 }
 export const staticImplements =
   <T>() =>

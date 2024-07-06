@@ -9,9 +9,9 @@
 - Next.js 14 (App Router)
 - Tailwind CSS
 - Zod
+- React Hook Form
 - SWR
 - clsx
-- React Hook Form
 - и другие
   - next-themes
   - js-cookie

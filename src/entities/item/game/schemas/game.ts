@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { gameCardBaseSchema } from "./gameCard";
+import { gameGenresSchema } from "./genre";
+import { ownerSchema } from "../../schemas/owner";
+import { TypesOfItems } from "../../types";
 
 export const gameBaseSchema = gameCardBaseSchema.merge(
   z.object({
@@ -27,6 +30,8 @@ export const gameBaseSchema = gameCardBaseSchema.merge(
             })
           : undefined
       ),
+
+    genres: gameGenresSchema.optional().nullable(),
   })
 );
 
@@ -36,12 +41,8 @@ export type GameCreateType = z.infer<typeof gameCreateSchema>;
 export const gameSchema = gameBaseSchema.merge(
   z.object({
     id: z.number().positive(),
-    owner_id: z.number().positive(),
+    owner: ownerSchema,
     update_date: z
-      .string()
-      .min(1)
-      .transform((d) => new Date(d)),
-    upload_date: z
       .string()
       .min(1)
       .transform((d) => new Date(d)),
@@ -61,3 +62,7 @@ export const gamesSchema = z.array(z.any()).transform((a) => {
   });
   return games;
 });
+
+export const isGame = (a: any): a is GameType => {
+  return (a as GameType).type === TypesOfItems.game;
+};

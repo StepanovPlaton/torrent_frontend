@@ -10,6 +10,12 @@ import {
   TypesOfItems,
 } from "../types";
 import { ItemService } from "../item";
+import {
+  GameGenreCreateType,
+  gameGenreSchema,
+  gameGenresSchema,
+} from "./schemas/genre";
+import { RequiredFrom } from "@/shared/utils/types";
 
 @staticImplements<IItemService>()
 export abstract class GameService {
@@ -26,7 +32,7 @@ export abstract class GameService {
 
   public static async GetCards() {
     return await HTTPService.get(
-      `/${this.urlPrefix}/cards`,
+      `/${this.urlPrefix}`,
       gameCardsSchema,
       this.cacheOptions(`/${this.urlPrefix}/cards`)
     );
@@ -49,12 +55,26 @@ export abstract class GameService {
     });
   }
 
-  public static GetEmpty(): GameCreateType {
+  public static GetEmpty(): RequiredFrom<GameCreateType> {
     return {
       title: "",
       torrent_file: "",
       type: TypesOfItems.game,
     };
+  }
+
+  public static async GetGenres() {
+    return await HTTPService.get(`/genres/${this.urlPrefix}`, gameGenresSchema);
+  }
+
+  public static async CreateGenre(info: GameGenreCreateType) {
+    return await HTTPService.post(
+      `/genres/${this.urlPrefix}`,
+      gameGenreSchema,
+      {
+        body: info,
+      }
+    );
   }
 
   static propertiesDescription: ItemPropertiesDescriptionType<GameType> = [

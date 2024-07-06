@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { movieCardBaseSchema } from "./movieCard";
+import { movieGenresSchema } from "./genre";
+import { movieActorsSchema } from "./actors";
+import { ownerSchema } from "../../schemas/owner";
+import { TypesOfItems } from "../../types";
 
 export const movieBaseSchema = movieCardBaseSchema.merge(
   z.object({
@@ -24,6 +28,9 @@ export const movieBaseSchema = movieCardBaseSchema.merge(
             })
           : undefined
       ),
+
+    actors: movieActorsSchema.optional().nullable(),
+    genres: movieGenresSchema.optional().nullable(),
   })
 );
 
@@ -33,12 +40,8 @@ export type MovieCreateType = z.infer<typeof movieCreateSchema>;
 export const movieSchema = movieBaseSchema.merge(
   z.object({
     id: z.number().positive(),
-    owner_id: z.number().positive(),
+    owner: ownerSchema,
     update_date: z
-      .string()
-      .min(1)
-      .transform((d) => new Date(d)),
-    upload_date: z
       .string()
       .min(1)
       .transform((d) => new Date(d)),
@@ -58,3 +61,7 @@ export const moviesSchema = z.array(z.any()).transform((a) => {
   });
   return games;
 });
+
+export const isMovie = (a: any): a is MovieType => {
+  return (a as MovieType).type === TypesOfItems.movie;
+};

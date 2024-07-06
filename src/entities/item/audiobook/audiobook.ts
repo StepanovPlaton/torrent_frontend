@@ -14,6 +14,12 @@ import {
   TypesOfItems,
 } from "../types";
 import { ItemService } from "../item";
+import {
+  AudiobookGenreCreateType,
+  audiobookGenreSchema,
+  audiobookGenresSchema,
+} from "./schemas/genre";
+import { RequiredFrom } from "@/shared/utils/types";
 
 @staticImplements<IItemService>()
 export abstract class AudiobookService {
@@ -30,7 +36,7 @@ export abstract class AudiobookService {
 
   public static async GetCards() {
     return await HTTPService.get(
-      `/${this.urlPrefix}/cards`,
+      `/${this.urlPrefix}`,
       audiobookCardsSchema,
       this.cacheOptions(`/${this.urlPrefix}/cards`)
     );
@@ -53,12 +59,29 @@ export abstract class AudiobookService {
     });
   }
 
-  public static GetEmpty(): AudiobookCreateType {
+  public static GetEmpty(): RequiredFrom<AudiobookCreateType> {
     return {
       title: "",
       torrent_file: "",
       type: TypesOfItems.audiobook,
     };
+  }
+
+  public static async GetGenres() {
+    return await HTTPService.get(
+      `/genres/${this.urlPrefix}`,
+      audiobookGenresSchema
+    );
+  }
+
+  public static async CreateGenre(info: AudiobookGenreCreateType) {
+    return await HTTPService.post(
+      `/genres/${this.urlPrefix}`,
+      audiobookGenreSchema,
+      {
+        body: info,
+      }
+    );
   }
 
   static propertiesDescription: ItemPropertiesDescriptionType<AudiobookType> = [

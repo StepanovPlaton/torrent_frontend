@@ -34,7 +34,3 @@ export const movieCardsSchema = z.array(z.any()).transform((a) => {
   });
   return cards;
 });
-
-export const isMovie = (a: any): a is MovieCardType => {
-  return (a as MovieCardType).type === TypesOfItems.movie;
-};

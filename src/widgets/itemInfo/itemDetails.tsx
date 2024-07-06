@@ -1,5 +1,9 @@
 import { ItemCreateType, ItemType } from "@/entities/item";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {
+  useFormContext,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 import clsx from "clsx";
 import { SpinnerIcon } from "@/shared/assets/icons";
 
@@ -8,23 +12,22 @@ export const ItemDetails = ({
   description,
   editable,
   state,
-  registerFormField: register,
-  setFormValue: setValue,
 }: {
-  title: {
-    title: string;
-    default_title: string;
-    error: string | undefined;
-  };
-  description: {
-    description: string | null | undefined;
-    default_description: string | null | undefined;
-  };
+  title: string;
+  description: string | null | undefined;
   editable: boolean;
   state: "saved" | "editing" | "error";
-  registerFormField: UseFormRegister<ItemType | ItemCreateType>;
-  setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
 }) => {
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext<ItemCreateType>();
+
+  const watched_title = watch("title");
+  const watched_description = watch("description");
+
   return (
     <span>
       <span className="flex items-end justify-between relative pt-2">
@@ -32,7 +35,7 @@ export const ItemDetails = ({
           <span
             className={clsx(
               "text-fg4 text-2xl absolute -z-10 opacity-0",
-              title.title === "" && "opacity-100",
+              watched_title === "" && "opacity-100",
               "transition-opacity cursor-text"
             )}
           >
@@ -46,7 +49,7 @@ export const ItemDetails = ({
           )}
           suppressContentEditableWarning={true}
           contentEditable={editable}
-          {...register("title", { value: title.default_title })}
+          {...register("title", { value: title })}
           onInput={(e) => {
             setValue("title", e.currentTarget.innerText, {
               shouldValidate: true,
@@ -54,7 +57,7 @@ export const ItemDetails = ({
             });
           }}
         >
-          {title.default_title}
+          {title}
         </h1>
 
         {editable && (
@@ -73,14 +76,14 @@ export const ItemDetails = ({
           </span>
         )}
       </span>
-      <div className="text-err text-xs w-full h-2">{title.error}</div>
-      {(description.default_description || editable) && (
+      <div className="text-err text-xs w-full h-2">{errors.title?.message}</div>
+      {(description || editable) && (
         <span className="relative">
           {editable && (
             <span
               className={clsx(
                 "text-fg4 text-md absolute -z-10 opacity-0",
-                (description.description === "" || description === undefined) &&
+                (watched_description === "" || description === undefined) &&
                   "opacity-100",
                 "transition-opacity mt-2"
               )}
@@ -97,7 +100,7 @@ export const ItemDetails = ({
               !editable && "cursor-default"
             )}
             {...register("description", {
-              value: description.default_description,
+              value: description,
             })}
             onInput={(e) => {
               setValue("description", e.currentTarget.innerText, {
@@ -106,7 +109,7 @@ export const ItemDetails = ({
               });
             }}
           >
-            {description.default_description}
+            {description}
           </div>
         </span>
       )}

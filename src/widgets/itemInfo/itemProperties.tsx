@@ -1,22 +1,27 @@
 import { ItemCreateType, ItemType } from "@/entities/item";
 import { ItemService } from "@/entities/item/item";
 import { ItemPropertiesDescriptionType } from "@/entities/item/types";
+import { RequiredFrom } from "@/shared/utils/types";
 import clsx from "clsx";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {
+  useFormContext,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
-export const ItemProperties = <T extends ItemType | ItemCreateType>({
+export const ItemProperties = <
+  T extends ItemType | RequiredFrom<ItemCreateType>
+>({
   item,
-  watchedFormData: watchedData,
   editable,
-  setFormValue: setValue,
-  registerFormField: register,
 }: {
   item: T; // Init values
-  watchedFormData: T; // Updated values
   editable: boolean;
-  setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
-  registerFormField: UseFormRegister<ItemType | ItemCreateType>;
 }) => {
+  const { register, setValue, watch } = useFormContext<ItemCreateType>();
+
+  const watchedData = watch();
+
   return (
     <div
       className={clsx(
@@ -26,7 +31,7 @@ export const ItemProperties = <T extends ItemType | ItemCreateType>({
     >
       {(
         ItemService.itemsConfiguration[item.type]
-          .propertiesDescription as ItemPropertiesDescriptionType<T>
+          .propertiesDescription as ItemPropertiesDescriptionType<ItemCreateType>
       ).map((section, i) => (
         <ul key={i} className="w-[48%] bg-bg1 rounded-lg py-1 px-4">
           {section.map((req) => (
@@ -54,27 +59,25 @@ export const ItemProperties = <T extends ItemType | ItemCreateType>({
                       (watchedData[req.key] as string) === "") &&
                       "opacity-100 absolute left-0 top-0 inline-block min-w-10 z-10"
                   )}
-                  {...register(req.key as keyof ItemType, {
+                  {...register(req.key, {
                     value: req.value
-                      ? req.value(item)
-                      : undefined ?? (item[req.key] as string),
+                      ? req.value(item as ItemCreateType)
+                      : undefined ??
+                        ((item as ItemCreateType)[req.key] as string),
                   })}
                   contentEditable={editable && (req.editable ?? true)}
                   suppressContentEditableWarning={true}
                   onInput={(e) => {
-                    setValue(
-                      req.key as keyof ItemType,
-                      e.currentTarget.innerText,
-                      {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      }
-                    );
+                    setValue(req.key, e.currentTarget.innerText, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    });
                   }}
                 >
                   {req.value
-                    ? req.value(item)
-                    : undefined ?? (item[req.key] as string)}
+                    ? req.value(item as ItemCreateType)
+                    : undefined ??
+                      ((item as ItemCreateType)[req.key] as string)}
                 </span>
               </span>
             </li>

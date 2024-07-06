@@ -17,6 +17,7 @@ type RequestOptions = GetRequestOptions & {
 
 export abstract class HTTPService {
   private static deepUndefinedToNull(o?: object): object | undefined {
+    if (Array.isArray(o)) return o;
     if (o)
       return Object.fromEntries(
         Object.entries(o).map(([k, v]) => {

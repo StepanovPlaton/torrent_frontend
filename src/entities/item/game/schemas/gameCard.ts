@@ -34,7 +34,3 @@ export const gameCardsSchema = z.array(z.any()).transform((a) => {
   });
   return cards;
 });
-
-export const isGame = (a: any): a is GameCardType => {
-  return (a as GameCardType).type === TypesOfItems.game;
-};

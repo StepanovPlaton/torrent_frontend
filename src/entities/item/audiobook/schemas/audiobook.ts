@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { audiobookCardBaseSchema } from "./audiobookCard";
+import { audiobookGenresSchema } from "./genre";
+import { ownerSchema } from "../../schemas/owner";
+import { TypesOfItems } from "../../types";
 
 export const audiobookBaseSchema = audiobookCardBaseSchema.merge(
   z.object({
@@ -22,6 +25,8 @@ export const audiobookBaseSchema = audiobookCardBaseSchema.merge(
             })
           : undefined
       ),
+
+    genres: audiobookGenresSchema.optional().nullable(),
   })
 );
 
@@ -31,12 +36,8 @@ export type AudiobookCreateType = z.infer<typeof audiobookCreateSchema>;
 export const audiobookSchema = audiobookBaseSchema.merge(
   z.object({
     id: z.number().positive(),
-    owner_id: z.number().positive(),
+    owner: ownerSchema,
     update_date: z
-      .string()
-      .min(1)
-      .transform((d) => new Date(d)),
-    upload_date: z
       .string()
       .min(1)
       .transform((d) => new Date(d)),
@@ -56,3 +57,7 @@ export const audiobooksSchema = z.array(z.any()).transform((a) => {
   });
   return audiobooks;
 });
+
+export const isAudiobook = (a: any): a is AudiobookType => {
+  return (a as AudiobookType).type === TypesOfItems.audiobook;
+};

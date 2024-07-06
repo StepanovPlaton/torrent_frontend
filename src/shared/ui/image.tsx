@@ -8,7 +8,7 @@ export const Img = ({
   alt,
   className,
 }: {
-  src: string;
+  src: string | null | undefined;
   preview?: boolean;
   width?: number;
   height?: number;
@@ -16,18 +16,22 @@ export const Img = ({
   className: string;
 }) => {
   return (
-    <Image
-      className={className}
-      src={
-        (preview
-          ? process.env.NEXT_PUBLIC_COVER_PREVIEW_URL
-          : process.env.NEXT_PUBLIC_COVER_FULL_URL) +
-        "/" +
-        src
-      }
-      width={width}
-      height={height}
-      alt={alt ?? ""}
-    />
+    <>
+      {src && (
+        <Image
+          className={className}
+          src={
+            (preview
+              ? process.env.NEXT_PUBLIC_COVER_PREVIEW_URL
+              : process.env.NEXT_PUBLIC_COVER_FULL_URL) +
+            "/" +
+            src
+          }
+          width={width}
+          height={height}
+          alt={alt ?? ""}
+        />
+      )}
+    </>
   );
 };

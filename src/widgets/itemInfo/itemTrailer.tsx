@@ -1,32 +1,30 @@
-import { ItemCreateType, ItemType } from "@/entities/item";
+import { ItemCreateType } from "@/entities/item";
 import { getYouTubeID } from "@/shared/utils/getYoutubeId";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 export const ItemTrailer = ({
-  trailer,
   default_trailer,
   editable,
-  setFormValue: setValue,
-  registerFormField: register,
 }: {
-  trailer: string | undefined | null;
   default_trailer: string | undefined | null;
   editable: boolean;
-  setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
-  registerFormField: UseFormRegister<ItemType | ItemCreateType>;
 }) => {
+  const { register, setValue, watch } = useFormContext<ItemCreateType>();
+
+  const watched_trailer = watch("trailer");
+
   return (
     <>
-      {(trailer || editable) && (
+      {(watched_trailer || editable) && (
         <div className="w-ful aspect-video">
-          {trailer && getYouTubeID(trailer) && (
+          {watched_trailer && getYouTubeID(watched_trailer) && (
             <iframe
-              src={"https://youtube.com/embed/" + getYouTubeID(trailer)}
+              src={"https://youtube.com/embed/" + getYouTubeID(watched_trailer)}
               className="w-full aspect-video rounded-lg mt-4"
               allowFullScreen
             />
           )}
-          {!trailer && editable && (
+          {!watched_trailer && editable && (
             <div className="mt-4 w-full aspect-video border-dashed border-2 border-bg1 rounded-lg"></div>
           )}
         </div>
@@ -42,7 +40,7 @@ export const ItemTrailer = ({
                 setValue("trailer", e.target.value);
               },
             })}
-            defaultValue={default_trailer}
+            defaultValue={default_trailer ?? ""}
           />
         </div>
       )}

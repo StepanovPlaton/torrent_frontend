@@ -13,7 +13,10 @@ export const MobileMenu = () => {
       <button
         className="w-16 h-16 *:w-12 *:h-1 *:bg-fg1 *:my-3 
 						*:transition-all *:duration-300 *:relative"
-        onClick={() => changeMenuOpen(!open)}
+        onClick={(e) => {
+          changeMenuOpen(!open);
+          e.stopPropagation();
+        }}
         onBlur={() => changeMenuOpen(false)}
       >
         <div

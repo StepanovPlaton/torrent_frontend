@@ -6,22 +6,24 @@ import {
   isMovie,
   ItemCreateType,
   ItemType,
+  MovieService,
 } from "@/entities/item";
 import { UserService } from "@/entities/user";
 import useSWR from "swr";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ItemCover } from "./itemCover";
-import { ItemService } from "@/entities/item/item";
+import { ItemService as IS } from "@/entities/item/item";
 import { ItemProperties } from "./itemProperties";
 import { ItemTrailer } from "./itemTrailer";
 import { ItemTorrent } from "./itemTorrent";
 import { ItemDetails } from "./itemDetails";
 import { ItemFragment } from "./itemFragment";
-import { EraseCacheByTag } from "@/shared/utils/http";
+import { ItemListProperties } from "./itemListProperties";
+import { RequiredFrom } from "@/shared/utils/types";
 
-export const ItemInfo = <T extends ItemType | ItemCreateType>({
+export const ItemInfo = <T extends ItemType | RequiredFrom<ItemCreateType>>({
   item: init_item,
 }: {
   item: T;
@@ -33,140 +35,118 @@ export const ItemInfo = <T extends ItemType | ItemCreateType>({
 
   useEffect(() => {
     if (me) {
-      if (ItemService.isExistingItem(item))
-        setEditable(me.id === item.owner_id);
+      if (IS.isExistingItem(item)) setEditable(me.id === item.owner.id);
       else setEditable(true);
     }
   }, [me, item]);
 
   const formRef = useRef<HTMLFormElement>(null);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    setError,
-    watch,
-    reset,
-    formState: { dirtyFields, errors },
-  } = useForm<ItemType | ItemCreateType>({
+  const form = useForm<ItemCreateType>({
     defaultValues: init_item,
-    resolver: zodResolver(
-      ItemService.itemsConfiguration[item.type].formResolver
-    ),
+    resolver: zodResolver(IS.itemsConfiguration[item.type].formResolver),
   });
-
-  useEffect(() => {
-    register("torrent_file", { value: item.torrent_file });
-    register("cover", { value: item.cover });
-    if (isAudiobook(item)) register("fragment", { value: item.fragment });
-  }, [item.cover, item.torrent_file, register]);
 
   const [savedTimeout, changeSavedTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
 
-  const watchedData = watch();
+  const watch = form.watch();
 
   const [formData, changeFormData] = useState<T | null>(null);
 
   useEffect(() => {
-    if (!Object.keys(dirtyFields).length) return;
-    if (JSON.stringify(watchedData) === JSON.stringify(formData)) return;
-    changeFormData(watchedData as T);
+    if (!Object.keys(form.formState.dirtyFields).length) return;
+    if (JSON.stringify(watch) === JSON.stringify(formData)) return;
+    changeFormData(watch as T);
     if (savedTimeout) clearTimeout(savedTimeout);
     changeSavedTimeout(
       setTimeout(() => {
         if (formRef.current) formRef.current.requestSubmit();
       }, 3000)
     );
-  }, [watchedData]);
+  }, [watch]);
 
   const onSubmit = async (formData: ItemCreateType) => {
-    const updatedItem = ItemService.isExistingItem(item)
-      ? await ItemService.ChangeItem(item.id, formData)
-      : await ItemService.AddItem(formData);
+    const updatedItem = IS.isExistingItem(item)
+      ? await IS.ChangeItem(item.id, formData)
+      : await IS.AddItem(formData);
     changeSavedTimeout(null);
     if (updatedItem) {
       changeItem(updatedItem as T);
-      reset({}, { keepValues: true });
+      form.reset({}, { keepValues: true });
     } else {
-      setError("root", { message: "Ошибка сервера" });
+      form.setError("root", { message: "Ошибка сервера" });
     }
   };
 
-  useEffect(() => console.log(errors), [errors]);
+  useEffect(() => console.log(form.formState.errors), [form.formState.errors]);
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="m-4 flex flex-col lp:block"
-      ref={formRef}
-    >
-      <ItemCover
-        cover={watchedData.cover}
-        editable={editable}
-        setFormValue={setValue}
-      />
+    <FormProvider {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="m-4 flex flex-col lp:block"
+        ref={formRef}
+      >
+        <ItemCover
+          cover={IS.isExistingItem(item) ? item.cover : null}
+          editable={editable}
+        />
 
-      <ItemDetails
-        title={{
-          title: watchedData.title,
-          default_title: item.title,
-          error: errors.title?.message,
-        }}
-        description={{
-          description: watchedData.description,
-          default_description: item.description,
-        }}
-        editable={editable}
-        state={
-          savedTimeout
-            ? Object.keys(errors).length > 0
-              ? "error"
-              : "editing"
-            : "saved"
-        }
-        registerFormField={register}
-        setFormValue={setValue}
-      />
+        <ItemDetails
+          title={item.title}
+          description={IS.isExistingItem(item) ? item.description : null}
+          editable={editable}
+          state={
+            savedTimeout
+              ? Object.keys(form.formState.errors).length > 0
+                ? "error"
+                : "editing"
+              : "saved"
+          }
+        />
 
-      <ItemProperties
-        item={item}
-        watchedFormData={watchedData}
-        editable={editable}
-        setFormValue={setValue}
-        registerFormField={register}
-      />
+        <ItemListProperties
+          propertyName="genres"
+          propertyList={IS.isExistingItem(item) ? item.genres : null}
+          editable={editable}
+          getAllTags={async () =>
+            await IS.itemsConfiguration[item.type].service.GetGenres()
+          }
+          createTag={async (property: string) =>
+            await IS.itemsConfiguration[item.type].service.CreateGenre({
+              genre: property,
+            })
+          }
+        />
 
-      {(isGame(item) || isMovie(item)) &&
-        (isGame(watchedData) || isMovie(watchedData)) && (
-          <ItemTrailer
-            default_trailer={item.trailer}
-            trailer={watchedData.trailer}
+        <ItemProperties item={item} editable={editable} />
+
+        {isMovie(item) && (
+          <ItemListProperties
+            propertyName="actors"
+            propertyList={IS.isExistingItem(item) ? item.actors : null}
             editable={editable}
-            registerFormField={register}
-            setFormValue={setValue}
+            getAllTags={async () => await MovieService.GetActors()}
+            createTag={async (property: string) =>
+              await MovieService.CreateActor({ actor: property })
+            }
           />
         )}
 
-      {isAudiobook(watchedData) && (
-        <ItemFragment
-          fragment={watchedData.fragment}
-          editable={editable}
-          registerFormField={register}
-          setFormValue={setValue}
-        />
-      )}
+        {((isGame(item) && isGame(watch)) ||
+          (isMovie(item) && isMovie(watch))) && (
+          <ItemTrailer default_trailer={item.trailer} editable={editable} />
+        )}
 
-      <ItemTorrent
-        title={watchedData.title}
-        torrent_file={watchedData.torrent_file}
-        editable={editable}
-        error={errors.torrent_file?.message}
-        setFormValue={setValue}
-      />
+        {isAudiobook(item) && isAudiobook(watch) && (
+          <ItemFragment fragment={item.fragment} editable={editable} />
+        )}
 
-      <input type="submit" className="hidden" />
-    </form>
+        <ItemTorrent torrent_file={item.torrent_file} editable={editable} />
+
+        <input type="submit" className="hidden" />
+      </form>
+    </FormProvider>
   );
 };

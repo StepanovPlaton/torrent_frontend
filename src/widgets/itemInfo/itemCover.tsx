@@ -1,19 +1,25 @@
 import { FilesService } from "@/entities/files";
-import { ItemCreateType, ItemType } from "@/entities/item";
+import { ItemCreateType } from "@/entities/item";
 import { Img } from "@/shared/ui";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 export const ItemCover = ({
   cover,
   editable,
-  setFormValue: setValue,
 }: {
   cover: string | null | undefined;
   editable: boolean;
-  setFormValue: UseFormSetValue<ItemType | ItemCreateType>;
 }) => {
+  const { register, setValue, watch } = useFormContext<ItemCreateType>();
+
+  const watch_cover = watch("cover");
+
+  useEffect(() => {
+    register("cover", { value: cover });
+  }, [cover, register]);
+
   const onCoverDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -48,18 +54,16 @@ export const ItemCover = ({
 
   return (
     <>
-      {(cover || editable) && (
+      {(cover || watch_cover || editable) && (
         <div className="lp:w-[60%] lp:px-4 lp:pl-0 pt-2 pb-4 float-left relative">
-          {cover && (
-            <Img
-              src={cover}
-              preview={false}
-              className="transition-all rounded-lg w-full object-contain"
-              width={1280}
-              height={720}
-            />
-          )}
-          {!cover && editable && (
+          <Img
+            src={watch_cover ?? cover}
+            preview={false}
+            className="transition-all rounded-lg w-full object-contain"
+            width={1280}
+            height={720}
+          />
+          {!watch_cover && !cover && editable && (
             <div className="w-full aspect-video border-dashed border-2 border-bg1 rounded-lg"></div>
           )}
 

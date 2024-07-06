@@ -1,4 +1,4 @@
-import { isSection, ItemService, MovieService } from "@/entities/item";
+import { ItemService } from "@/entities/item";
 import { ItemCard } from "@/widgets/itemCard";
 import { Section } from "@/widgets/section";
 import { redirect } from "next/navigation";

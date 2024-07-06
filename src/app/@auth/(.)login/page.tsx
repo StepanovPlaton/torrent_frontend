@@ -46,7 +46,7 @@ export default function Login() {
               >
                 <input
                   {...register(field)}
-                  className="peer/search w-full rounded-lg bg-bg4 px-2 h-10"
+                  className="peer/search w-full rounded-lg bg-bg4 px-2 h-10 outline-none"
                   placeholder=" "
                   autoComplete="off"
                 />
