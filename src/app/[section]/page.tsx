@@ -12,7 +12,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   if (!SectionService.isSection(section)) {
     redirect("/");
-    return {};
   }
   return {
     title: `.Torrent: ${SectionService.sectionsConfiguration[section].sectionName}`,
