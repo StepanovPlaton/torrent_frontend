@@ -21,6 +21,9 @@ export const Img = ({
         <Image
           className={className}
           src={
+            "" +
+            process.env.NEXT_PUBLIC_BASE_URL +
+            process.env.NEXT_PUBLIC_API_PATTERN +
             (preview
               ? process.env.NEXT_PUBLIC_COVER_PREVIEW_URL
               : process.env.NEXT_PUBLIC_COVER_FULL_URL) +

@@ -62,6 +62,9 @@ export const ItemFragment = ({
           controlsList="nodownload"
           typeof="audio/mpeg"
           src={
+            "" +
+            process.env.NEXT_PUBLIC_BASE_URL +
+            process.env.NEXT_PUBLIC_API_PATTERN +
             process.env.NEXT_PUBLIC_FRAGMENT_URL +
             "/" +
             (watched_fragment ?? "")

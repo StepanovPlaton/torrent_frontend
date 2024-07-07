@@ -34,25 +34,31 @@ export abstract class HTTPService {
     schema: Z,
     options?: RequestOptions
   ) {
-    return await fetch(process.env.NEXT_PUBLIC_BASE_URL + url, {
-      method: method,
-      headers: {
-        accept: "application/json",
-        ...((options?.stringify ?? true) != true
-          ? {}
-          : { "Content-Type": "application/json" }),
-        Authorization: "Bearer " + UserService.GetToken(),
-        ...options?.headers,
-      },
-      body:
-        (options?.stringify ?? true) != true
-          ? (options?.body as BodyInit)
-          : JSON.stringify(
-              this.deepUndefinedToNull(options?.body as object | undefined)
-            ),
-      cache: options?.cache ?? options?.next ? undefined : "no-cache",
-      next: options?.next ?? {},
-    })
+    return await fetch(
+      "" +
+        process.env.NEXT_PUBLIC_BASE_URL +
+        process.env.NEXT_PUBLIC_API_PATTERN +
+        url,
+      {
+        method: method,
+        headers: {
+          accept: "application/json",
+          ...((options?.stringify ?? true) != true
+            ? {}
+            : { "Content-Type": "application/json" }),
+          Authorization: "Bearer " + UserService.GetToken(),
+          ...options?.headers,
+        },
+        body:
+          (options?.stringify ?? true) != true
+            ? (options?.body as BodyInit)
+            : JSON.stringify(
+                this.deepUndefinedToNull(options?.body as object | undefined)
+              ),
+        cache: options?.cache ?? options?.next ? undefined : "no-cache",
+        next: options?.next ?? {},
+      }
+    )
       .then((r) => {
         if (r && r.ok) return r;
         else throw Error("Response ok = false");

@@ -1,21 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	async rewrites() {
-		return process.env.NODE_ENV == "development"
-			? [
-					{
-						source: "/api/:path*",
-						destination: "http://127.0.0.1:8000/:path*",
-					},
-			  ]
-			: [];
+		return [
+				{
+					source: "/api/:path*",
+					destination: `${process.env.BACKEND_PROTOCOL}://`+
+					`${process.env.BACKEND_DOMAIN}:${process.env.BACKEND_PORT}/:path*`,
+				}
+			]
 	},
 	images: {
 		remotePatterns: [
 			{
-				protocol: "http",
-				hostname: "127.0.0.1",
-				port: "8000",
+				protocol: process.env.BASE_PROTOCOL,
+				hostname: process.env.BASE_DOMAIN,
+				port: process.env.BASE_PORT,
 			},
 		],
 	},

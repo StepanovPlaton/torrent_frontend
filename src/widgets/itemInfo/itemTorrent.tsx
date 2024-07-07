@@ -67,7 +67,12 @@ export const ItemTorrent = ({
         <div className="flex flex-col items-center">
           <Link
             href={
-              process.env.NEXT_PUBLIC_CONTENT_URL + "/" + watched_torrent_file
+              "" +
+              process.env.NEXT_PUBLIC_BASE_URL +
+              process.env.NEXT_PUBLIC_API_PATTERN +
+              process.env.NEXT_PUBLIC_CONTENT_URL +
+              "/" +
+              watched_torrent_file
             }
             className={clsx(
               "p-4 bg-ac0 text-fg1 text-2xl rounded-lg",
